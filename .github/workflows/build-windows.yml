@@ -1,0 +1,32 @@
+name: build-windows
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build portable zip
+        shell: pwsh
+        env:
+          LIBREOFFICE_MSI_URL: ${{ vars.LIBREOFFICE_MSI_URL }}
+        run: |
+          ./scripts/build-windows.ps1 -PythonExe "python" -LibreOfficeMsiUrl "$env:LIBREOFFICE_MSI_URL"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch-doc-to-docx-gui-windows-x64
+          path: dist/*.zip

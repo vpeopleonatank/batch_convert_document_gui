@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import platform
 import shutil
+import sys
 from pathlib import Path
 
 
@@ -16,10 +17,26 @@ def _is_executable_file(path: Path) -> bool:
     return os.access(path, os.X_OK)
 
 
+def _bundled_soffice_candidate() -> Path | None:
+    if not getattr(sys, "frozen", False):
+        return None
+
+    if platform.system().lower() != "windows":
+        return None
+
+    base_dir = Path(sys.executable).resolve().parent
+    candidate = base_dir / "LibreOffice" / "program" / "soffice.exe"
+    return candidate if _is_executable_file(candidate) else None
+
+
 def resolve_soffice_path(user_path: str | None) -> Path | None:
     if user_path:
         candidate = Path(user_path).expanduser()
         return candidate if _is_executable_file(candidate) else None
+
+    bundled = _bundled_soffice_candidate()
+    if bundled is not None:
+        return bundled
 
     from_path = shutil.which("soffice")
     if from_path:
@@ -51,4 +68,3 @@ def resolve_soffice_path(user_path: str | None) -> Path | None:
         if _is_executable_file(candidate):
             return candidate
     return None
-
