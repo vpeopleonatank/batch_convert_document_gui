@@ -4,6 +4,15 @@ import subprocess
 from pathlib import Path
 
 
+def _is_mhtml(source_doc: Path) -> bool:
+    try:
+        with source_doc.open("rb") as f:
+            header = f.read(512)
+        return header.lstrip().startswith(b"MIME-Version:")
+    except OSError:
+        return False
+
+
 def convert_doc_to_docx(soffice_path: Path, source_doc: Path, dest_dir: Path) -> tuple[bool, str]:
     dest_dir.mkdir(parents=True, exist_ok=True)
     expected_output = dest_dir / f"{source_doc.stem}.docx"
@@ -19,8 +28,12 @@ def convert_doc_to_docx(soffice_path: Path, source_doc: Path, dest_dir: Path) ->
         "docx",
         "--outdir",
         str(dest_dir),
-        str(source_doc),
     ]
+
+    if _is_mhtml(source_doc):
+        cmd += ["--infilter=HTML (StarWriter)"]
+
+    cmd.append(str(source_doc))
 
     result = subprocess.run(cmd, capture_output=True, text=True, check=False)
     log = (

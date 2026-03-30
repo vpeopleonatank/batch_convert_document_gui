@@ -104,7 +104,7 @@ function Bundle-LibreOffice {
   }
 
   $Soffice = Get-ChildItem -Path $ExtractDir -Recurse -File -Filter "soffice.exe" |
-    Where-Object { $_.FullName -match "\\\\program\\\\soffice\\.exe$" } |
+    Where-Object { $_.FullName -match "\\program\\soffice\.exe$" } |
     Select-Object -First 1
 
   if (-not $Soffice) {
