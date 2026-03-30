@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python test_mhtml_convert.py)",
+      "Bash(python test_mhtml_orientation.py)",
+      "Bash(powershell -NoProfile -Command \"Get-Content -Path \"\"D:\\\\NĂM 2025\\\\THÁNG 1\\\\Docx\\\\BAN TIN CUOI 22H NGAY 20.1.2025 20-01-2025.docx.doc\"\" -Encoding Byte -TotalCount 1024 | Format-Hex | head -20\")",
+      "Bash(python3:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
